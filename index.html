@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clerk 認証テスト</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; background-color: #f9fafb; }
+        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="app" class="box">
+        <p>Clerkを読み込み中...</p>
+    </div>
+
+    <div id="protected-content" class="box hidden">
+        <h3>🎉 ログイン成功！</h3>
+        <p id="user-info"></p>
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+        <p>ここにStripeの「有料プランに登録」ボタンを置きます。</p>
+    </div>
+
+    <script>
+        // ★ あなたのClerk公開キー
+        const clerkPubKey = 'pk_test_Y2xlYW4tdGFycG9uLTkxLmNsZXJrLmFjY291bnRzLmRldiQ';
+
+        // Clerkの処理をスタートする関数
+        const startClerk = async () => {
+            const Clerk = window.Clerk;
+            const appDiv = document.getElementById('app');
+            const protectedContent = document.getElementById('protected-content');
+            const userInfo = document.getElementById('user-info');
+
+            try {
+                // Clerkを起動
+                await Clerk.load();
+
+                if (Clerk.user) {
+                    // 【ログインしている場合】
+                    appDiv.innerHTML = `<div id="user-button"></div>`;
+                    // Clerkが用意している「プロフィールアイコン（ログアウト機能付き）」を表示
+                    Clerk.mountUserButton(document.getElementById('user-button'));
+                    
+                    // ユーザー情報を表示して、隠していたコンテンツを出す
+                    userInfo.innerText = `ようこそ、${Clerk.user.primaryEmailAddress.emailAddress} さん`;
+                    protectedContent.classList.remove('hidden');
+                } else {
+                    // 【ログインしていない場合】
+                    appDiv.innerHTML = `
+                        <h2 style="text-align: center;">ログインしてね</h2>
+                        <div id="sign-in"></div>
+                    `;
+                    // Clerkが用意している「ログイン画面（Googleボタン付き）」を表示
+                    Clerk.mountSignIn(document.getElementById('sign-in'));
+                }
+            } catch (err) {
+                console.error('Clerkのエラー:', err);
+                appDiv.innerHTML = '<p>エラーが発生しました。</p>';
+            }
+        };
+
+        // Clerkのシステム（JavaScript）をCDNから自動で読み込む仕組み
+        (() => {
+            const script = document.createElement('script');
+            script.setAttribute('data-clerk-publishable-key', clerkPubKey);
+            script.async = true;
+            script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
+            script.crossOrigin = 'anonymous';
+            script.addEventListener('load', startClerk);
+            document.body.appendChild(script);
+        })();
+    </script>
+</body>
+</html>
