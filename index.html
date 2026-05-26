@@ -1,13 +1,28 @@
 <!doctype html>
-<html lang="en">
+<html lang="ja">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>Clerk 認証テスト</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 500px; margin: 0 auto; background-color: #f9fafb; }
+        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-top: 20px; }
+        .hidden { display: none; }
+        .error-text { color: red; font-size: 14px; word-break: break-all; }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app" class="box">
+        <p>Clerkを読み込み中...</p>
+    </div>
+
+    <div id="protected-content" class="box hidden">
+        <h3>🎉 ログイン成功！</h3>
+        <p id="user-info"></p>
+        <hr style="margin: 20px 0; border: none; border-top: 1px solid #eee;">
+        <p>ここにStripeの「有料プランに登録」ボタンを置きます。</p>
+    </div>
+
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
